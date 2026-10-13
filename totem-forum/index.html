@@ -1,0 +1,538 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Totem Fórum de Tecnologia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;600;700&display=swap">
+<style>
+/* Layout: tela única de totem — cabeçalho curto + grade 2x2 que ocupa toda a tela; vídeo em tela cheia por cima. */
+:root {
+  --ink: #0a1020;          /* fundo da tela */
+  --panel: #121a30;        /* fundo dos cartões */
+  --line: #24304f;         /* linhas e bordas */
+  --fg: #eef2fb;           /* texto principal */
+  --muted: #9aa6c4;        /* texto secundário */
+  --signal: #ffb547;       /* destaque: toque / ação */
+  --font-display: "Unbounded", "Arial Black", system-ui, sans-serif;
+  --font-body: "Manrope", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--fg);
+  font-family: var(--font-body);
+  overflow: hidden;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+body.sem-cursor, body.sem-cursor * { cursor: none !important; }
+
+/* ---------- Tela inicial ---------- */
+.home {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vh, 28px);
+  padding-block: clamp(16px, 3.5vh, 44px);
+  padding-inline: clamp(16px, 3.5vw, 64px);
+  background:
+    linear-gradient(var(--ink), transparent 30%),
+    repeating-linear-gradient(0deg, transparent 0 47px, rgba(120,150,220,.06) 47px 48px),
+    repeating-linear-gradient(90deg, transparent 0 47px, rgba(120,150,220,.06) 47px 48px),
+    var(--ink);
+}
+.topo {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+}
+.evento {
+  margin: 0 0 6px;
+  font-size: clamp(12px, 1.25vw, 20px);
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--signal);
+}
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(26px, 3.6vw, 64px);
+  line-height: 1.05;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+.dica {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: clamp(14px, 1.4vw, 24px);
+  font-weight: 600;
+  color: var(--muted);
+}
+.dedo {
+  width: clamp(14px, 1.3vw, 22px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--signal);
+  box-shadow: 0 0 0 0 rgba(255,181,71,.6);
+  animation: pulso 2s infinite;
+}
+@keyframes pulso {
+  0% { box-shadow: 0 0 0 0 rgba(255,181,71,.55); }
+  70% { box-shadow: 0 0 0 18px rgba(255,181,71,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,181,71,0); }
+}
+
+.grade {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 1.8vw, 32px);
+}
+.card {
+  --cor: #4f8cff;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: clamp(6px, 1vh, 12px);
+  min-width: 0;
+  padding: clamp(16px, 2.6vh, 32px) clamp(18px, 2.4vw, 40px);
+  border: 2px solid var(--line);
+  border-radius: 22px;
+  background:
+    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--cor) 55%, transparent), transparent 60%),
+    linear-gradient(160deg, color-mix(in srgb, var(--cor) 22%, var(--panel)), var(--panel) 70%);
+  background-size: cover;
+  background-position: center;
+  color: var(--fg);
+  font: inherit;
+  text-align: left;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform .18s ease, border-color .18s ease;
+}
+.card.com-imagem::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(10,16,32,.1) 20%, rgba(10,16,32,.92) 85%);
+}
+.card > * { position: relative; }
+.card:active { transform: scale(.975); border-color: var(--cor); }
+.card:focus-visible { outline: 4px solid var(--signal); outline-offset: 4px; }
+.area {
+  align-self: flex-start;
+  margin-bottom: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--cor) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cor) 70%, transparent);
+  font-size: clamp(11px, 1vw, 17px);
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.card h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(20px, min(2.3vw, 4vh), 42px);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.card p {
+  margin: 0;
+  max-width: 46ch;
+  font-size: clamp(13px, 1.25vw, 22px);
+  line-height: 1.4;
+  color: var(--muted);
+}
+.rodape-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: clamp(4px, 1vh, 12px);
+  font-size: clamp(12px, 1.05vw, 19px);
+  font-weight: 600;
+  color: var(--muted);
+}
+.play {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: clamp(48px, min(4.2vw, 7vh), 80px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--signal);
+  color: var(--ink);
+}
+.play svg { width: 42%; height: 42%; margin-left: 8%; }
+
+.rodape {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: clamp(11px, .95vw, 16px);
+  color: var(--muted);
+  letter-spacing: .04em;
+}
+
+/* ---------- Tela do vídeo ---------- */
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  background: #000;
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+.player.visivel { opacity: 1; }
+.player video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.barra-topo {
+  position: absolute;
+  inset: 0 0 auto 0;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-block: calc(clamp(12px, 2.5vh, 28px) + env(safe-area-inset-top, 0px)) clamp(12px, 2.5vh, 28px);
+  padding-inline: clamp(16px, 3vw, 48px);
+  background: linear-gradient(rgba(0,0,0,.75), transparent);
+}
+.voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(12px, 1.6vh, 20px) clamp(18px, 2vw, 32px);
+  border: 2px solid rgba(255,255,255,.5);
+  border-radius: 999px;
+  background: rgba(10,16,32,.6);
+  color: #fff;
+  font: 700 clamp(15px, 1.4vw, 24px) var(--font-body);
+  cursor: pointer;
+}
+.voltar:active { background: var(--signal); color: var(--ink); border-color: var(--signal); }
+.voltar:focus-visible { outline: 4px solid var(--signal); outline-offset: 3px; }
+.voltar svg { width: 1.1em; height: 1.1em; }
+.titulo-video {
+  min-width: 0;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.6vw, 28px);
+  font-weight: 500;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.progresso {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 8px;
+  background: rgba(255,255,255,.15);
+}
+.progresso span {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--signal);
+}
+
+/* Vídeo de demonstração (usado quando o arquivo de vídeo ainda não existe) */
+.demo {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 18px;
+  padding-inline: 24px;
+  text-align: center;
+  background:
+    radial-gradient(70% 70% at 50% 40%, color-mix(in srgb, var(--cor, #4f8cff) 45%, transparent), transparent 70%),
+    var(--ink);
+}
+.demo .area { align-self: center; }
+.demo h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 88px);
+  line-height: 1.05;
+  text-wrap: balance;
+  animation: respira 3s ease-in-out infinite alternate;
+}
+.demo p { margin: 0; max-width: 52ch; font-size: clamp(14px, 1.5vw, 24px); color: var(--muted); }
+.demo small {
+  margin-top: 12px;
+  padding: 6px 14px;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  font-size: clamp(11px, 1vw, 16px);
+  color: var(--muted);
+}
+@keyframes respira { from { transform: scale(1); } to { transform: scale(1.04); } }
+
+/* Aviso de retorno ao final do vídeo */
+.fim {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 20px;
+  padding-inline: 24px;
+  text-align: center;
+  background: rgba(10,16,32,.97);
+}
+.fim h2 { margin: 0; font-family: var(--font-display); font-size: clamp(26px, 3.6vw, 60px); }
+.fim p { margin: 0; font-size: clamp(15px, 1.6vw, 26px); color: var(--muted); }
+.fim strong { color: var(--signal); font-variant-numeric: tabular-nums; }
+
+/* Celular / tela estreita: uma coluna com rolagem (o totem real usa a grade 2x2) */
+@media (max-width: 760px) {
+  body { overflow: auto; }
+  .home { height: auto; min-height: 100%; }
+  .grade { grid-template-columns: minmax(0, 1fr); grid-template-rows: none; }
+  .card { min-height: 240px; }
+}
+/* Totem em pé (retrato): uma coluna com 4 linhas */
+@media (orientation: portrait) and (min-width: 761px) {
+  .grade { grid-template-columns: minmax(0, 1fr); grid-template-rows: repeat(4, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<main class="home" id="home">
+  <header class="topo">
+    <div>
+      <p class="evento" id="evento"></p>
+      <h1 id="chamada"></h1>
+    </div>
+    <div class="dica"><span class="dedo" aria-hidden="true"></span><span id="instrucao"></span></div>
+  </header>
+  <section class="grade" id="grade" aria-label="Projetos"></section>
+  <footer class="rodape">
+    <span id="instituicao"></span>
+    <span>Toque em <b>Voltar ao início</b> a qualquer momento para sair do vídeo</span>
+  </footer>
+</main>
+
+<div class="player" id="player" hidden>
+  <video id="video" playsinline preload="auto"></video>
+  <div class="demo" id="demo" hidden></div>
+  <div class="barra-topo">
+    <button class="voltar" id="voltar" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+      Voltar ao início
+    </button>
+    <p class="titulo-video" id="tituloVideo"></p>
+  </div>
+  <div class="progresso" aria-hidden="true"><span id="barra"></span></div>
+  <div class="fim" id="fim" hidden>
+    <h2>Obrigado por assistir!</h2>
+    <p>Voltando à tela inicial em <strong id="contagem">3</strong> s</p>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURAÇÃO — edite apenas este bloco
+   - video:  caminho do arquivo dentro da pasta "videos" (MP4 H.264 recomendado)
+   - imagem: (opcional) foto de capa dentro da pasta "imagens"
+   - cor:    cor de destaque do cartão
+   ===================================================================== */
+const CONFIG = {
+  evento: "Fórum de Tecnologia 2026",
+  chamada: "Conheça os projetos dos nossos alunos",
+  instrucao: "Toque em um projeto para assistir",
+  instituicao: "Escola de Educação Profissional · Protótipo do totem interativo",
+  segundosAntesDeVoltar: 3,      // aviso "Voltando..." ao fim do vídeo
+  minutosPausadoParaVoltar: 1,   // se o vídeo ficar pausado, volta sozinho
+  esconderCursor: false,         // true no evento (tela touch não precisa de cursor)
+  segundosDemo: 12               // duração do vídeo simulado quando o arquivo não existe
+};
+
+const PROJETOS = [
+  {
+    area: "Automação Industrial",
+    titulo: "Braço Robótico Seletor de Peças",
+    descricao: "Robô que identifica a cor e o tamanho das peças na esteira e separa cada uma no lote certo.",
+    equipe: "Turma Mecatrônica · 3º módulo",
+    video: "videos/projeto-1.mp4",
+    imagem: "",
+    cor: "#3d8bff"
+  },
+  {
+    area: "Internet das Coisas",
+    titulo: "Monitor de Energia em Tempo Real",
+    descricao: "Sensores medem o consumo de cada máquina e mostram no celular onde dá para economizar.",
+    equipe: "Turma Eletrotécnica · 2º módulo",
+    video: "videos/projeto-2.mp4",
+    imagem: "",
+    cor: "#22c39a"
+  },
+  {
+    area: "Visão Computacional",
+    titulo: "Inspeção de Qualidade com Câmera",
+    descricao: "Uma câmera com inteligência artificial encontra riscos e falhas no produto antes da embalagem.",
+    equipe: "Turma Desenvolvimento de Sistemas",
+    video: "videos/projeto-3.mp4",
+    imagem: "",
+    cor: "#b26bff"
+  },
+  {
+    area: "Manutenção 4.0",
+    titulo: "Alerta de Falha por Vibração",
+    descricao: "O sistema escuta a vibração do motor e avisa a equipe dias antes de a máquina quebrar.",
+    equipe: "Turma Manutenção Industrial",
+    video: "videos/projeto-4.mp4",
+    imagem: "",
+    cor: "#ff6b5a"
+  }
+];
+/* ===================== fim da configuração ===================== */
+
+const $ = (id) => document.getElementById(id);
+const home = $("home"), grade = $("grade"), player = $("player"), video = $("video");
+const demo = $("demo"), barra = $("barra"), fim = $("fim"), contagem = $("contagem");
+
+$("evento").textContent = CONFIG.evento;
+$("chamada").textContent = CONFIG.chamada;
+$("instrucao").textContent = CONFIG.instrucao;
+$("instituicao").textContent = CONFIG.instituicao;
+if (CONFIG.esconderCursor) document.body.classList.add("sem-cursor");
+
+const iconePlay = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4l15 8-15 8z"/></svg>';
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+PROJETOS.forEach((p, i) => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "card" + (p.imagem ? " com-imagem" : "");
+  b.style.setProperty("--cor", p.cor);
+  if (p.imagem) b.style.backgroundImage = `url("${p.imagem}")`;
+  b.setAttribute("aria-label", `Assistir ao vídeo: ${p.titulo}`);
+  b.innerHTML = `
+    <span class="area">${esc(p.area)}</span>
+    <h2>${esc(p.titulo)}</h2>
+    <p>${esc(p.descricao)}</p>
+    <span class="rodape-card"><span>${esc(p.equipe)}</span><span class="play">${iconePlay}</span></span>`;
+  b.addEventListener("click", () => abrir(i));
+  grade.appendChild(b);
+});
+
+/* ---------- Reprodução ---------- */
+let atual = null, modoDemo = false, demoInicio = 0, demoRaf = 0;
+let timerFim = 0, timerPausa = 0, fechando = false;
+
+function abrir(i) {
+  const p = PROJETOS[i];
+  atual = p; fechando = false; modoDemo = false;
+  telaCheia();
+  player.style.setProperty("--cor", p.cor);
+  $("tituloVideo").textContent = p.titulo;
+  barra.style.width = "0";
+  fim.hidden = true; demo.hidden = true;
+  player.hidden = false;
+  requestAnimationFrame(() => player.classList.add("visivel"));
+
+  video.src = p.video;
+  video.currentTime = 0;
+  const tentativa = video.play();
+  if (tentativa) tentativa.catch((e) => { if (e.name !== "AbortError") iniciarDemo(); });
+}
+
+video.addEventListener("error", () => { if (!player.hidden) iniciarDemo(); });
+video.addEventListener("timeupdate", () => {
+  if (video.duration) barra.style.width = (video.currentTime / video.duration * 100) + "%";
+});
+video.addEventListener("ended", terminou);
+video.addEventListener("pause", () => {
+  clearTimeout(timerPausa);
+  if (!video.ended && !player.hidden) timerPausa = setTimeout(voltarInicio, CONFIG.minutosPausadoParaVoltar * 60000);
+});
+video.addEventListener("play", () => clearTimeout(timerPausa));
+video.addEventListener("click", () => (video.paused ? video.play() : video.pause()));
+
+/* Vídeo simulado: permite apresentar o fluxo antes de ter os vídeos reais */
+function iniciarDemo() {
+  if (modoDemo || !atual) return;
+  modoDemo = true;
+  video.removeAttribute("src"); video.load();
+  demo.innerHTML = `
+    <span class="area">${esc(atual.area)}</span>
+    <h2>${esc(atual.titulo)}</h2>
+    <p>${esc(atual.descricao)}</p>
+    <small>Vídeo simulado · coloque o arquivo em ${esc(atual.video)}</small>`;
+  demo.hidden = false;
+  demoInicio = performance.now();
+  const passo = (t) => {
+    const f = Math.min(1, (t - demoInicio) / (CONFIG.segundosDemo * 1000));
+    barra.style.width = (f * 100) + "%";
+    if (f < 1) demoRaf = requestAnimationFrame(passo); else terminou();
+  };
+  demoRaf = requestAnimationFrame(passo);
+}
+
+function terminou() {
+  if (fechando || player.hidden) return;
+  fechando = true;
+  let n = CONFIG.segundosAntesDeVoltar;
+  contagem.textContent = n;
+  fim.hidden = false;
+  timerFim = setInterval(() => {
+    n -= 1; contagem.textContent = n;
+    if (n <= 0) voltarInicio();
+  }, 1000);
+}
+
+function voltarInicio() {
+  clearInterval(timerFim); clearTimeout(timerPausa); cancelAnimationFrame(demoRaf);
+  video.pause(); video.removeAttribute("src"); video.load();
+  player.classList.remove("visivel");
+  setTimeout(() => { player.hidden = true; fim.hidden = true; demo.hidden = true; atual = null; }, 350);
+}
+
+$("voltar").addEventListener("click", voltarInicio);
+fim.addEventListener("click", voltarInicio);
+
+/* ---------- Modo totem ---------- */
+function telaCheia() {
+  const el = document.documentElement;
+  if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {});
+}
+async function manterTelaLigada() {
+  try { if ("wakeLock" in navigator) await navigator.wakeLock.request("screen"); } catch (e) {}
+}
+manterTelaLigada();
+document.addEventListener("visibilitychange", () => { if (!document.hidden) manterTelaLigada(); });
+document.addEventListener("contextmenu", (e) => e.preventDefault());          // sem menu de toque longo
+document.addEventListener("gesturestart", (e) => e.preventDefault());         // sem zoom de pinça (Safari)
+document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !player.hidden) voltarInicio(); });
+</script>
+</body>
+</html>
